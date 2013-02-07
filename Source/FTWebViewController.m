@@ -1,6 +1,7 @@
 #import "FTWebViewController.h"
-#import "StyledPageControl.h"
+#import "FTWebView.h"
 
+#import "StyledPageControl.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface FTWebViewController ()

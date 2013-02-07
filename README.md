@@ -3,6 +3,14 @@
 A iOS UIWebView controller that provides pagination for multiple HTML documents
 and a simple way to trigger controller actions from these documents.
 
+In addition, it will automatically set the following class names on the `body`
+element:
+
+* `visible`: On the currently visible page. This can be used to, for instance,
+             start animations when the page is shown.
+* `swiping`: On each loaded page, while the user is swiping. This can be used
+             to, for instance, disable animations during swiping.
+
 This has been extracted from two in-production applications.
 
 ### Usage

@@ -31,6 +31,7 @@
 
 @property (assign,   nonatomic) CGFloat pageMargin;
 @property (assign,   nonatomic) BOOL hasPageMarginShadow;
+@property (assign,   nonatomic) BOOL layoutHorizontally;
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
 @property (weak,     nonatomic) id<FTWebViewControllerDelegate> delegate;
 

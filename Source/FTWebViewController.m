@@ -7,7 +7,7 @@
 @property (strong, nonatomic) UIScrollView *pagingScrollView;
 @property (strong, nonatomic) NSMutableArray *pageViews;
 @property (strong, nonatomic) UISegmentedControl *navigationButtons;
-@property (strong, nonatomic) NSInteger currentPageIndex;
+@property (assign, nonatomic) NSInteger currentPageIndex;
 @property (assign, nonatomic, getter=isRotating) BOOL rotating;
 @property (assign, nonatomic, getter=didNotifyDelegateThatFirstPageIsLoaded) BOOL notifiedDelegateThatFirstPageIsLoaded;
 @end

@@ -270,16 +270,11 @@
         arguments[nameAndValue[0]] = value;
       }
     }
-
-    DDLogInfo(@"FTWebViewController did receive action `%@' from page `%d' with arguments: %@",
-      actionName, self.currentPageIndex+1, arguments);
     [self.delegate webViewController:self didReceiveAction:actionName withArguments:[arguments copy]];
-
     return NO;
   }
 
   if (self.openExternalLinksOutsideApp && navigationType == UIWebViewNavigationTypeLinkClicked) {
-    DDLogInfo(@"External link clicked: %@", request.URL);
     [[UIApplication sharedApplication] openURL:request.URL];
     return NO;
   }

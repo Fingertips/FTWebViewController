@@ -12,7 +12,7 @@
       return (UIScrollView *)subview;
     }
   }
-  DDLogError(@"Unable to find nested scrollview in FTWebView: %@", self);
+  NSLog(@"[!] Unable to find nested scrollview in FTWebView: %@", self);
   return nil;
 }
 

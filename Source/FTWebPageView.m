@@ -79,7 +79,6 @@
 - (void)setHTMLElementClass:(NSString *)className;
 {
   self.webView.HTMLElementClass = className;
-  DDLogVerbose(@"Classes on HTML element on page `%d': %@", self.pageIndex+1, self.webView.HTMLElementClass);
 }
 
 - (void)scrollToTop;

@@ -258,7 +258,7 @@
   NSURL *URL = request.URL;
   id<FTWebViewControllerDelegate> delegate = self.delegate;
   if (delegate && [self.applicationScheme isEqualToString:URL.scheme] &&
-      [delegate respondsToSelector:@selector(webViewController:receivedAction:withArguments:)]) {
+      [delegate respondsToSelector:@selector(webViewController:didReceiveAction:withArguments:)]) {
     NSString *actionName = URL.host;
     NSArray *pairs = [URL.query componentsSeparatedByString:@"&"];
     NSMutableDictionary *arguments = [NSMutableDictionary new];
@@ -271,9 +271,9 @@
       }
     }
 
-    DDLogInfo(@"FTWebViewController received action `%@' from page `%d' with arguments: %@",
+    DDLogInfo(@"FTWebViewController did receive action `%@' from page `%d' with arguments: %@",
       actionName, self.currentPageIndex+1, arguments);
-    [self.delegate webViewController:self receivedAction:actionName withArguments:[arguments copy]];
+    [self.delegate webViewController:self didReceiveAction:actionName withArguments:[arguments copy]];
 
     return NO;
   }

@@ -13,7 +13,7 @@
                         toClass:(NSString *)className;
 
 - (void)webViewController:(FTWebViewController *)webViewController
-           receivedAction:(NSString *)actionName
+         didReceiveAction:(NSString *)actionName
             withArguments:(NSDictionary *)arguments;
 
 @end

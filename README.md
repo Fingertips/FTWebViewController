@@ -25,7 +25,7 @@ Will trigger a call to your delegate with the following parameters:
 
 ```objc
 - (void)webViewController:(FTWebViewController *)webViewController
-           receivedAction:(NSString *)actionName
+         didReceiveAction:(NSString *)actionName
             withArguments:(NSDictionary *)arguments;
 {
   NSLog(@"Action name: %@", actionName); // => AddToFavorites

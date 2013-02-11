@@ -31,6 +31,7 @@
     _currentPageIndex = 0;
     _hasPageMarginShadow = YES;
     _openExternalLinksOutsideApp = YES;
+    _hasPageNavigationButtons = YES;
     _pageViews = [NSMutableArray new];
   }
   return self;
@@ -127,15 +128,17 @@
   self.pageControl.numberOfPages = self.numberOfPages;
   [self.view addSubview:self.pageControl];
 
-  NSArray *images = @[[UIImage imageNamed:@"button-left"], [UIImage imageNamed:@"button-right"]];
-  self.navigationButtons = [[UISegmentedControl alloc] initWithItems:images];
-  self.navigationButtons.momentary = YES;
-  self.navigationButtons.segmentedControlStyle = UISegmentedControlStyleBar;
-  [self.navigationButtons addTarget:self
-                            action:@selector(changePage:)
-                  forControlEvents:UIControlEventValueChanged];
-  UIBarButtonItem *buttonsItem = [[UIBarButtonItem alloc] initWithCustomView:self.navigationButtons];
-  self.navigationItem.rightBarButtonItem = buttonsItem;
+  if (self.hasPageNavigationButtons) {
+    NSArray *images = @[[UIImage imageNamed:@"button-left"], [UIImage imageNamed:@"button-right"]];
+    self.navigationButtons = [[UISegmentedControl alloc] initWithItems:images];
+    self.navigationButtons.momentary = YES;
+    self.navigationButtons.segmentedControlStyle = UISegmentedControlStyleBar;
+    [self.navigationButtons addTarget:self
+                              action:@selector(changePage:)
+                    forControlEvents:UIControlEventValueChanged];
+    UIBarButtonItem *buttonsItem = [[UIBarButtonItem alloc] initWithCustomView:self.navigationButtons];
+    self.navigationItem.rightBarButtonItem = buttonsItem;
+  }
 
   [self loadPageAtIndex:0];
 }
@@ -231,8 +234,10 @@
 
   self.pageControl.currentPage = index;
 
-  [self.navigationButtons setEnabled:!self.isAtFirstPage forSegmentAtIndex:0];
-  [self.navigationButtons setEnabled:!self.isAtLastPage  forSegmentAtIndex:1];
+  if (self.hasPageNavigationButtons) {
+    [self.navigationButtons setEnabled:!self.isAtFirstPage forSegmentAtIndex:0];
+    [self.navigationButtons setEnabled:!self.isAtLastPage  forSegmentAtIndex:1];
+  }
 }
 
 - (void)loadPageAtIndex:(NSInteger)index inPageView:(FTWebPageView *)pageView;

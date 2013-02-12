@@ -47,6 +47,26 @@
   }
 }
 
+- (void)setOpenExternalLinksOutsideApp:(BOOL)flag;
+{
+  if (_openExternalLinksOutsideApp != flag) {
+    _openExternalLinksOutsideApp = flag;
+    for (FTWebPageView *pageView in self.pageViews) {
+      pageView.openExternalLinksOutsideApp = flag;
+    }
+  }
+}
+
+- (void)setApplicationScheme:(NSString *)scheme;
+{
+  if (![_applicationScheme isEqualToString:scheme]) {
+    _applicationScheme = scheme;
+    for (FTWebPageView *pageView in self.pageViews) {
+      pageView.applicationScheme = scheme;
+    }
+  }
+}
+
 - (NSUInteger)numberOfPages;
 {
   return [self.URLs count];
@@ -111,7 +131,9 @@
   for (int i = 0; i < 3; i++) {
     FTWebPageView *pageView = [[FTWebPageView alloc] initWithFrame:viewFrame];
     pageView.delegate = self;
+    pageView.applicationScheme = self.applicationScheme;
     pageView.hasShadow = self.hasPageMarginShadow;
+    pageView.openExternalLinksOutsideApp = self.openExternalLinksOutsideApp;
     [self.pageViews addObject:pageView];
   }
   // Scrolling to left/right on the first/last pages should show the same
@@ -259,33 +281,13 @@
   }
 }
 
-- (BOOL)pageView:(FTWebPageView *)pageView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
+- (void)webPageView:(FTWebPageView *)webPageView
+   didReceiveAction:(NSString *)actionName
+      withArguments:(NSDictionary *)arguments;
 {
-  NSURL *URL = request.URL;
-  id<FTWebViewControllerDelegate> delegate = self.delegate;
-  if (delegate && [self.applicationScheme isEqualToString:URL.scheme] &&
-      [delegate respondsToSelector:@selector(webViewController:didReceiveAction:withArguments:)]) {
-    NSString *actionName = URL.host;
-    NSArray *pairs = [URL.query componentsSeparatedByString:@"&"];
-    NSMutableDictionary *arguments = [NSMutableDictionary new];
-    if ([URL.query length] > 0) {
-      for (NSString *pair in pairs) {
-        NSArray *nameAndValue = [pair componentsSeparatedByString:@"="];
-        NSString *value = nameAndValue[1];
-        value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        arguments[nameAndValue[0]] = value;
-      }
-    }
-    [self.delegate webViewController:self didReceiveAction:actionName withArguments:[arguments copy]];
-    return NO;
+  if ([self.delegate respondsToSelector:@selector(webViewController:didReceiveAction:withArguments:)]) {
+    [self.delegate webViewController:self didReceiveAction:actionName withArguments:arguments];
   }
-
-  if (self.openExternalLinksOutsideApp && navigationType == UIWebViewNavigationTypeLinkClicked) {
-    [[UIApplication sharedApplication] openURL:request.URL];
-    return NO;
-  }
-
-  return YES;
 }
 
 #pragma mark - pagingScrollView delegate methods

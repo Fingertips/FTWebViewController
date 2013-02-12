@@ -23,10 +23,10 @@ with `-[FTWebViewController initWithPageURLs:applicationScheme:]`, passing it a
 identifier by which your custom actions will be recognized, and implement the
 relevant `FTWebViewControllerDelegate` method.
 
-For instance, with an application scheme of `BananaRecipes`, the following link:
+For instance, with an application scheme of `x-BananaRecipes`, the following link:
 
 ```
-<a href="BananaRecipes://AddToFavorites/?id=42">Add to favorites.</a>
+<a href="x-BananaRecipes://AddToFavorites/?id=42">Add to favorites.</a>
 ```
 
 Will trigger a call to your delegate with the following parameters:

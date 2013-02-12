@@ -19,6 +19,7 @@
     self.backgroundColor = [UIColor lightGrayColor];
 
     _hasShadow = NO;
+    _openExternalLinksOutsideApp = YES;
 
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _activityIndicator.hidesWhenStopped = YES;
@@ -47,6 +48,13 @@
     } else {
       self.layer.shadowOpacity = 0.0;
     }
+  }
+}
+
+- (void)setApplicationScheme:(NSString *)scheme;
+{
+  if (![_applicationScheme isEqualToString:scheme]) {
+    _applicationScheme = [scheme lowercaseString];
   }
 }
 
@@ -107,13 +115,39 @@
   // Now that the webview has been loaded we can show it again.
   [self addSubview:self.webView];
   [self.activityIndicator stopAnimating];
-  [self.delegate pageViewDidFinishLoad:self];
+  if ([self.delegate respondsToSelector:@selector(webPageViewDidFinishLoad:)]) {
+    [self.delegate webPageViewDidFinishLoad:self];
+  }
 }
 
 - (BOOL)webView:(UIWebView *)_ shouldStartLoadWithRequest:(NSURLRequest *)request
                                            navigationType:(UIWebViewNavigationType)navigationType;
 {
-  return [self.delegate pageView:self shouldStartLoadWithRequest:request navigationType:navigationType];
+  NSURL *URL = request.URL;
+  id<FTWebPageViewDelegate> delegate = self.delegate;
+  if (delegate && [self.applicationScheme isEqualToString:URL.scheme] &&
+      [delegate respondsToSelector:@selector(webPageView:didReceiveAction:withArguments:)]) {
+    NSString *actionName = URL.host;
+    NSArray *pairs = [URL.query componentsSeparatedByString:@"&"];
+    NSMutableDictionary *arguments = [NSMutableDictionary new];
+    if ([URL.query length] > 0) {
+      for (NSString *pair in pairs) {
+        NSArray *nameAndValue = [pair componentsSeparatedByString:@"="];
+        NSString *value = nameAndValue[1];
+        value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        arguments[nameAndValue[0]] = value;
+      }
+    }
+    [self.delegate webPageView:self didReceiveAction:actionName withArguments:[arguments copy]];
+    return NO;
+  }
+
+  if (self.openExternalLinksOutsideApp && navigationType == UIWebViewNavigationTypeLinkClicked) {
+    [[UIApplication sharedApplication] openURL:request.URL];
+    return NO;
+  }
+
+  return YES;
 }
 
 @end

@@ -102,7 +102,6 @@
 - (void)setURL:(NSURL *)URL {
   if (![URL isEqual:_URL]) {
     _URL = URL;
-    // NSLog(@"Load page view URL: %@", _URL.absoluteString);
     [self.activityIndicator startAnimating];
     [self.webView removeFromSuperview];
     [self.webView loadRequest:[NSURLRequest requestWithURL:_URL]];

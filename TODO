@@ -1,3 +1,5 @@
 * Extract test cases from original projects this was extracted from.
 * Add API documentation.
 * Add navigation button images.
+* Since iOS 5, UIWebView has a scrollView property, use that.
+* Simply use UIPageControl?

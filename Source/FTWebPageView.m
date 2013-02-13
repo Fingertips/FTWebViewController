@@ -19,6 +19,7 @@
     self.backgroundColor = [UIColor lightGrayColor];
 
     _hasShadow = NO;
+    _scrollEnabled = YES;
     _enableScrollingIfDocumentIsLargerThanViewport = YES;
     _openExternalLinksOutsideApp = YES;
 
@@ -49,6 +50,17 @@
     } else {
       self.layer.shadowOpacity = 0.0;
     }
+  }
+}
+
+- (void)setScrollEnabled:(BOOL)flag;
+{
+  if (_scrollEnabled != flag) {
+    _scrollEnabled = flag;
+    UIScrollView *scrollView = self.webView.scrollView;
+    scrollView.bounces = flag;
+    scrollView.scrollEnabled = flag;
+    self.enableScrollingIfDocumentIsLargerThanViewport = flag;
   }
 }
 

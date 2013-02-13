@@ -21,6 +21,7 @@
 @property (assign,   nonatomic) BOOL hasShadow;
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
 @property (assign,   nonatomic) BOOL enableScrollingIfDocumentIsLargerThanViewport;
+@property (assign,   nonatomic) BOOL scrollEnabled;
 
 - (void)scrollToTop;
 - (void)setHTMLElementClass:(NSString *)className;

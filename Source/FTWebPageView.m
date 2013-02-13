@@ -19,6 +19,7 @@
     self.backgroundColor = [UIColor lightGrayColor];
 
     _hasShadow = NO;
+    _enableScrollingIfDocumentIsLargerThanViewport = YES;
     _openExternalLinksOutsideApp = YES;
 
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -68,7 +69,9 @@
   // if it has been removed from the superview at the time the superview resizes.
   self.webView.frame = self.bounds;
 
-  [self.webView enableScrollingIfDocumentIsLargerThanViewport];
+  if (self.enableScrollingIfDocumentIsLargerThanViewport) {
+    [self.webView enableScrollingIfDocumentIsLargerThanViewport];
+  }
 }
 
 - (UIScrollView *)scrollView;
@@ -110,7 +113,9 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)_
 {
-  [self.webView enableScrollingIfDocumentIsLargerThanViewport];
+  if (self.enableScrollingIfDocumentIsLargerThanViewport) {
+    [self.webView enableScrollingIfDocumentIsLargerThanViewport];
+  }
   // Now that the webview has been loaded we can show it again.
   [self addSubview:self.webView];
   [self.activityIndicator stopAnimating];

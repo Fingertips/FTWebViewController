@@ -2,7 +2,6 @@
 
 @interface FTWebView : UIWebView
 
-- (UIScrollView *)findNestedScrollView;
 - (void)enableScrollingIfDocumentIsLargerThanViewport;
 
 - (void)setHTMLElementClass:(NSString *)className;

@@ -6,12 +6,9 @@
 @interface FTWebPageView ()
 @property (strong,   nonatomic) FTWebView *webView;
 @property (strong,   nonatomic) UIActivityIndicatorView *activityIndicator;
-@property (readonly, nonatomic) UIScrollView *scrollView;
 @end
 
 @implementation FTWebPageView
-
-@synthesize scrollView = _scrollView;
 
 - (id)initWithFrame:(CGRect)frame;
 {
@@ -86,14 +83,6 @@
   }
 }
 
-- (UIScrollView *)scrollView;
-{
-  if (_scrollView == nil) {
-    _scrollView = [self.webView findNestedScrollView];
-  }
-  return _scrollView;
-}
-
 - (NSString *)title;
 {
   return [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
@@ -106,7 +95,7 @@
 
 - (void)scrollToTop;
 {
-  self.scrollView.contentOffset = CGPointZero;
+  self.webView.scrollView.contentOffset = CGPointZero;
 }
 
 // When a page is loaded, the webview is removed from the view and is only

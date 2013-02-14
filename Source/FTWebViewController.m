@@ -29,6 +29,7 @@
     _applicationScheme = [applicationScheme lowercaseString];
     _pageMargin = 20;
     _currentPageIndex = 0;
+    _hasPageControl = YES;
     _hasPageMarginShadow = YES;
     _openExternalLinksOutsideApp = YES;
     _hasPageNavigationButtons = YES;
@@ -140,15 +141,18 @@
   // background color as the webviews on the top/bottom.
   scrollView.backgroundColor = self.currentPageView.webView.backgroundColor;
 
-  CGRect pageControlFrame = CGRectMake(0, 0, viewFrame.size.width, 22);
-  self.pageControl = [[StyledPageControl alloc] initWithFrame:pageControlFrame];
-  self.pageControl.pageControlStyle = PageControlStyleDefault;
-  self.pageControl.diameter = 9;
-  self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
-  self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
-  self.pageControl.userInteractionEnabled = NO;
-  self.pageControl.numberOfPages = self.numberOfPages;
-  [self.view addSubview:self.pageControl];
+  if (self.hasPageControl) {
+    CGRect pageControlFrame = CGRectMake(0, 0, viewFrame.size.width, 22);
+    self.pageControl = [[StyledPageControl alloc] initWithFrame:pageControlFrame];
+    self.pageControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.pageControl.pageControlStyle = PageControlStyleDefault;
+    self.pageControl.diameter = 9;
+    self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+    self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
+    self.pageControl.userInteractionEnabled = NO;
+    self.pageControl.numberOfPages = self.numberOfPages;
+    [self.view addSubview:self.pageControl];
+  }
 
   if (self.hasPageNavigationButtons) {
     NSArray *images = @[[UIImage imageNamed:@"button-left"], [UIImage imageNamed:@"button-right"]];

@@ -3,3 +3,4 @@
 * Add navigation button images.
 * Simply use UIPageControl?
 * Automatically disable shadow if pageMargin is 0.
+* Make applicationScheme globally configurable.

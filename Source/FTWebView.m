@@ -4,12 +4,12 @@
 
 @implementation FTWebView
 
-- (void)enableScrollingIfDocumentIsLargerThanViewport;
+- (void)enableScrollingIfDocumentIsLargerThanViewport:(BOOL)byHeight;
 {
-  // Completely disable scrolling when the page is shorter than the viewport.
-  // This ensures that the page doesn't bounce when the user tries to scroll.
-  int height = [[self stringByEvaluatingJavaScriptFromString:@"document.height"] intValue];
-  self.scrollView.scrollEnabled = height > floor(self.bounds.size.height);
+  NSString *dimension = byHeight ? @"document.height" : @"document.width";
+  int value = [[self stringByEvaluatingJavaScriptFromString:dimension] intValue];
+  CGSize size = self.bounds.size;
+  self.scrollView.scrollEnabled = value > floor(byHeight ? size.height : size.width);
 }
 
 - (void)setHTMLElementClass:(NSString *)className;

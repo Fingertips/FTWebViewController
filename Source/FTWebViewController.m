@@ -39,6 +39,18 @@
   return self;
 }
 
+- (void)setHorizontalLayout:(BOOL)flag;
+{
+  if (_horizontalLayout != flag) {
+    _horizontalLayout = flag;
+    FTWebPageViewConditionalScrolling type;
+    type = flag ? FTWebPageViewConditionalScrollingByHeight : FTWebPageViewConditionalScrollingByWidth;
+    for (FTWebPageView *pageView in self.pageViews) {
+      pageView.conditionalScrolling = type;
+    }
+  }
+}
+
 - (void)setHasPageMarginShadow:(BOOL)flag;
 {
   if (_hasPageMarginShadow != flag) {
@@ -142,6 +154,7 @@
     pageView.applicationScheme = self.applicationScheme;
     pageView.hasShadow = self.hasPageMarginShadow;
     pageView.openExternalLinksOutsideApp = self.openExternalLinksOutsideApp;
+    pageView.conditionalScrolling = self.horizontalLayout ? FTWebPageViewConditionalScrollingByHeight : FTWebPageViewConditionalScrollingByWidth;
     [self.pageViews addObject:pageView];
   }
   // Scrolling to left/right on the first/last pages should show the same

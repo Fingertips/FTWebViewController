@@ -17,7 +17,7 @@
 
     _hasShadow = NO;
     _scrollEnabled = YES;
-    _enableScrollingIfDocumentIsLargerThanViewport = YES;
+    _conditionalScrolling = FTWebPageViewConditionalScrollingByHeight;
     _openExternalLinksOutsideApp = YES;
 
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -57,7 +57,6 @@
     UIScrollView *scrollView = self.webView.scrollView;
     scrollView.bounces = flag;
     scrollView.scrollEnabled = flag;
-    self.enableScrollingIfDocumentIsLargerThanViewport = flag;
   }
 }
 
@@ -65,6 +64,14 @@
 {
   if (![_applicationScheme isEqualToString:scheme]) {
     _applicationScheme = [scheme lowercaseString];
+  }
+}
+
+- (void)updateConditionalScrolling;
+{
+  if (self.scrollEnabled && self.conditionalScrolling != FTWebPageViewConditionalScrollingNever) {
+    BOOL byHeight = self.conditionalScrolling == FTWebPageViewConditionalScrollingByHeight;
+    [self.webView enableScrollingIfDocumentIsLargerThanViewport:byHeight];
   }
 }
 
@@ -78,9 +85,7 @@
   // if it has been removed from the superview at the time the superview resizes.
   self.webView.frame = self.bounds;
 
-  if (self.enableScrollingIfDocumentIsLargerThanViewport) {
-    [self.webView enableScrollingIfDocumentIsLargerThanViewport];
-  }
+  [self updateConditionalScrolling];
 }
 
 - (NSString *)title;
@@ -114,9 +119,7 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)_
 {
-  if (self.enableScrollingIfDocumentIsLargerThanViewport) {
-    [self.webView enableScrollingIfDocumentIsLargerThanViewport];
-  }
+  [self updateConditionalScrolling];
   // Now that the webview has been loaded we can show it again.
   [self addSubview:self.webView];
   [self.activityIndicator stopAnimating];

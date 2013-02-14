@@ -1,5 +1,11 @@
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(int, FTWebPageViewConditionalScrolling) {
+  FTWebPageViewConditionalScrollingNever    = 0,
+  FTWebPageViewConditionalScrollingByHeight = 1,
+  FTWebPageViewConditionalScrollingByWidth  = 2
+};
+
 @class FTWebView, FTWebPageView;
 
 @protocol FTWebPageViewDelegate <NSObject>
@@ -20,7 +26,7 @@
 @property (assign,   nonatomic) NSInteger pageIndex;
 @property (assign,   nonatomic) BOOL hasShadow;
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
-@property (assign,   nonatomic) BOOL enableScrollingIfDocumentIsLargerThanViewport;
+@property (assign,   nonatomic) FTWebPageViewConditionalScrolling conditionalScrolling;
 @property (assign,   nonatomic) BOOL scrollEnabled;
 
 - (void)scrollToTop;

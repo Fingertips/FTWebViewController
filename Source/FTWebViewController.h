@@ -33,6 +33,8 @@
 @property (assign,   nonatomic) BOOL hasPageMarginShadow;
 @property (assign,   nonatomic) BOOL layoutHorizontally;
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
+@property (assign,   nonatomic) BOOL hasPageNavigationButtons;
+@property (assign,   nonatomic) BOOL hasPageControl;
 @property (weak,     nonatomic) id<FTWebViewControllerDelegate> delegate;
 
 - (id)initWithPageURLs:(NSArray *)URLs;

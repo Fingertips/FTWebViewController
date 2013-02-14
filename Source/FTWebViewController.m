@@ -29,9 +29,11 @@
     _applicationScheme = [applicationScheme lowercaseString];
     _pageMargin = 20;
     _currentPageIndex = 0;
+    _hasPageControl = YES;
     _hasPageMarginShadow = YES;
     _layoutHorizontally = YES;
     _openExternalLinksOutsideApp = YES;
+    _hasPageNavigationButtons = YES;
     _pageViews = [NSMutableArray new];
   }
   return self;
@@ -43,6 +45,26 @@
     _hasPageMarginShadow = flag;
     for (FTWebPageView *pageView in self.pageViews) {
       pageView.hasShadow = flag;
+    }
+  }
+}
+
+- (void)setOpenExternalLinksOutsideApp:(BOOL)flag;
+{
+  if (_openExternalLinksOutsideApp != flag) {
+    _openExternalLinksOutsideApp = flag;
+    for (FTWebPageView *pageView in self.pageViews) {
+      pageView.openExternalLinksOutsideApp = flag;
+    }
+  }
+}
+
+- (void)setApplicationScheme:(NSString *)scheme;
+{
+  if (![_applicationScheme isEqualToString:scheme]) {
+    _applicationScheme = scheme;
+    for (FTWebPageView *pageView in self.pageViews) {
+      pageView.applicationScheme = scheme;
     }
   }
 }
@@ -116,32 +138,39 @@
   for (int i = 0; i < 3; i++) {
     FTWebPageView *pageView = [[FTWebPageView alloc] initWithFrame:viewFrame];
     pageView.delegate = self;
+    pageView.applicationScheme = self.applicationScheme;
     pageView.hasShadow = self.hasPageMarginShadow;
+    pageView.openExternalLinksOutsideApp = self.openExternalLinksOutsideApp;
     [self.pageViews addObject:pageView];
   }
   // Scrolling to left/right on the first/last pages should show the same
   // background color as the webviews on the top/bottom.
   scrollView.backgroundColor = self.currentPageView.webView.backgroundColor;
 
-  CGRect pageControlFrame = CGRectMake(0, 0, viewFrame.size.width, 22);
-  self.pageControl = [[StyledPageControl alloc] initWithFrame:pageControlFrame];
-  self.pageControl.pageControlStyle = PageControlStyleDefault;
-  self.pageControl.diameter = 9;
-  self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
-  self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
-  self.pageControl.userInteractionEnabled = NO;
-  self.pageControl.numberOfPages = self.numberOfPages;
-  [self.view addSubview:self.pageControl];
+  if (self.hasPageControl) {
+    CGRect pageControlFrame = CGRectMake(0, 0, viewFrame.size.width, 22);
+    self.pageControl = [[StyledPageControl alloc] initWithFrame:pageControlFrame];
+    self.pageControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.pageControl.pageControlStyle = PageControlStyleDefault;
+    self.pageControl.diameter = 9;
+    self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+    self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
+    self.pageControl.userInteractionEnabled = NO;
+    self.pageControl.numberOfPages = self.numberOfPages;
+    [self.view addSubview:self.pageControl];
+  }
 
-  NSArray *images = @[[UIImage imageNamed:@"button-left"], [UIImage imageNamed:@"button-right"]];
-  self.navigationButtons = [[UISegmentedControl alloc] initWithItems:images];
-  self.navigationButtons.momentary = YES;
-  self.navigationButtons.segmentedControlStyle = UISegmentedControlStyleBar;
-  [self.navigationButtons addTarget:self
-                            action:@selector(changePage:)
-                  forControlEvents:UIControlEventValueChanged];
-  UIBarButtonItem *buttonsItem = [[UIBarButtonItem alloc] initWithCustomView:self.navigationButtons];
-  self.navigationItem.rightBarButtonItem = buttonsItem;
+  if (self.hasPageNavigationButtons) {
+    NSArray *images = @[[UIImage imageNamed:@"button-left"], [UIImage imageNamed:@"button-right"]];
+    self.navigationButtons = [[UISegmentedControl alloc] initWithItems:images];
+    self.navigationButtons.momentary = YES;
+    self.navigationButtons.segmentedControlStyle = UISegmentedControlStyleBar;
+    [self.navigationButtons addTarget:self
+                              action:@selector(changePage:)
+                    forControlEvents:UIControlEventValueChanged];
+    UIBarButtonItem *buttonsItem = [[UIBarButtonItem alloc] initWithCustomView:self.navigationButtons];
+    self.navigationItem.rightBarButtonItem = buttonsItem;
+  }
 
   [self loadPageAtIndex:0];
 }
@@ -243,8 +272,10 @@
 
   self.pageControl.currentPage = index;
 
-  [self.navigationButtons setEnabled:!self.isAtFirstPage forSegmentAtIndex:0];
-  [self.navigationButtons setEnabled:!self.isAtLastPage  forSegmentAtIndex:1];
+  if (self.hasPageNavigationButtons) {
+    [self.navigationButtons setEnabled:!self.isAtFirstPage forSegmentAtIndex:0];
+    [self.navigationButtons setEnabled:!self.isAtLastPage  forSegmentAtIndex:1];
+  }
 }
 
 - (void)loadPageAtIndex:(NSInteger)index inPageView:(FTWebPageView *)pageView;
@@ -266,33 +297,13 @@
   }
 }
 
-- (BOOL)pageView:(FTWebPageView *)pageView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
+- (void)webPageView:(FTWebPageView *)webPageView
+   didReceiveAction:(NSString *)actionName
+      withArguments:(NSDictionary *)arguments;
 {
-  NSURL *URL = request.URL;
-  id<FTWebViewControllerDelegate> delegate = self.delegate;
-  if (delegate && [self.applicationScheme isEqualToString:URL.scheme] &&
-      [delegate respondsToSelector:@selector(webViewController:didReceiveAction:withArguments:)]) {
-    NSString *actionName = URL.host;
-    NSArray *pairs = [URL.query componentsSeparatedByString:@"&"];
-    NSMutableDictionary *arguments = [NSMutableDictionary new];
-    if ([URL.query length] > 0) {
-      for (NSString *pair in pairs) {
-        NSArray *nameAndValue = [pair componentsSeparatedByString:@"="];
-        NSString *value = nameAndValue[1];
-        value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        arguments[nameAndValue[0]] = value;
-      }
-    }
-    [self.delegate webViewController:self didReceiveAction:actionName withArguments:[arguments copy]];
-    return NO;
+  if ([self.delegate respondsToSelector:@selector(webViewController:didReceiveAction:withArguments:)]) {
+    [self.delegate webViewController:self didReceiveAction:actionName withArguments:arguments];
   }
-
-  if (self.openExternalLinksOutsideApp && navigationType == UIWebViewNavigationTypeLinkClicked) {
-    [[UIApplication sharedApplication] openURL:request.URL];
-    return NO;
-  }
-
-  return YES;
 }
 
 #pragma mark - pagingScrollView delegate methods

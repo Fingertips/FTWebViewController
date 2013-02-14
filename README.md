@@ -21,12 +21,12 @@ method, passing it a list of URLs, one for each page.
 In order to handle actions triggered from the documents, initialize an instance
 with `-[FTWebViewController initWithPageURLs:applicationScheme:]`, passing it a
 identifier by which your custom actions will be recognized, and implement the
-relevant `FTWebViewControllerDelegate` method.
+relevant `FTWebViewControllerDelegate` protocol method.
 
-For instance, with an application scheme of `BananaRecipes`, the following link:
+For instance, with a scheme of `x-BananaRecipes`, the following link:
 
 ```
-<a href="BananaRecipes://AddToFavorites/?id=42">Add to favorites.</a>
+<a href="x-BananaRecipes://AddToFavorites/?id=42">Add to favorites.</a>
 ```
 
 Will trigger a call to your delegate with the following parameters:
@@ -40,6 +40,9 @@ Will trigger a call to your delegate with the following parameters:
   NSLog(@"Arguments: %@", arguments);    // => { id = 42; }
 }
 ```
+
+Alternatively, if you don’t need multi-page support, you can use `FTWebPageView`
+and the `FTWebPageViewDelegate` protocol directly.
 
 ### License
 

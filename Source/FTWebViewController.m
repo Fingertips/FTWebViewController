@@ -31,7 +31,7 @@
     _currentPageIndex = 0;
     _hasPageControl = YES;
     _hasPageMarginShadow = YES;
-    _layoutHorizontally = YES;
+    _horizontalLayout = YES;
     _openExternalLinksOutsideApp = YES;
     _hasPageNavigationButtons = YES;
     _pageViews = [NSMutableArray new];
@@ -77,7 +77,7 @@
 - (void)loadPageAtIndex:(NSInteger)index;
 {
   [self _loadPageAtIndex:index];
-  if (self.layoutHorizontally) {
+  if (self.horizontalLayout) {
     CGFloat offset = self.currentPageView.frame.origin.x - (self.pageMargin / 2);
     self.pagingScrollView.contentOffset = CGPointMake(offset, 0);
   } else {
@@ -117,7 +117,7 @@
   viewFrame.origin = CGPointZero;
 
   CGRect scrollViewFrame;
-  if (self.layoutHorizontally) {
+  if (self.horizontalLayout) {
     scrollViewFrame = CGRectMake(-(self.pageMargin / 2), 0, viewFrame.size.width + self.pageMargin, viewFrame.size.height);
   } else {
     scrollViewFrame = CGRectMake(0, -(self.pageMargin / 2), viewFrame.size.width, viewFrame.size.height + self.pageMargin);
@@ -125,7 +125,8 @@
   UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:scrollViewFrame];
   scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   scrollView.delegate = self;
-  scrollView.alwaysBounceHorizontal = YES;
+  scrollView.alwaysBounceHorizontal = self.horizontalLayout;
+  scrollView.alwaysBounceVertical = !self.horizontalLayout;
   scrollView.pagingEnabled = YES;
   scrollView.showsHorizontalScrollIndicator = NO;
   scrollView.showsVerticalScrollIndicator = NO;
@@ -209,7 +210,11 @@
 - (void)layoutScrollViewAndPages;
 {
   CGSize size = self.pagingScrollView.frame.size;
-  size.width *= self.numberOfPages;
+  if (self.horizontalLayout) {
+    size.width *= self.numberOfPages;
+  } else {
+    size.height *= self.numberOfPages;
+  }
   self.pagingScrollView.contentSize = size;
   [self updateFrameOfPageView:self.previousPageView forPageIndex:self.currentPageIndex-1];
   [self updateFrameOfPageView:self.currentPageView  forPageIndex:self.currentPageIndex];
@@ -222,7 +227,7 @@
   pageView.pageIndex = index;
   if (index >= 0 && index < self.numberOfPages) {
     CGRect frame = self.pagingScrollView.frame;
-    if (self.layoutHorizontally) {
+    if (self.horizontalLayout) {
       frame.origin.x = (frame.size.width * index) + (self.pageMargin / 2);
       frame.origin.y = 0;
       frame.size.width -= self.pageMargin;
@@ -323,7 +328,7 @@
   [self assignHTMLElementClass:@"swiping" toPageView:self.nextPageView];
 }
 
-// TODO update for layoutHorizontally=NO
+// TODO update for horizontalLayout=NO
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 {
   if (self.isRotating) return;
@@ -380,7 +385,7 @@
 }
 
 // Update the layout as it should be at the end of the rotation animation.
-// TODO update for layoutHorizontally=NO
+// TODO update for horizontalLayout=NO
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                                          duration:(NSTimeInterval)duration;
 {

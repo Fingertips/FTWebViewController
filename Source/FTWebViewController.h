@@ -31,7 +31,7 @@
 
 @property (assign,   nonatomic) CGFloat pageMargin;
 @property (assign,   nonatomic) BOOL hasPageMarginShadow;
-@property (assign,   nonatomic) BOOL layoutHorizontally;
+@property (assign,   nonatomic) BOOL horizontalLayout;
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
 @property (assign,   nonatomic) BOOL hasPageNavigationButtons;
 @property (assign,   nonatomic) BOOL hasPageControl;

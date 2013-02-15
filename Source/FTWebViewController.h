@@ -44,8 +44,12 @@
 - (id)initWithPageURLs:(NSArray *)URLs applicationScheme:(NSString *)applicationScheme;
 
 - (void)loadPageAtIndex:(NSInteger)index;
+- (void)loadPageAtIndex:(NSInteger)index animated:(BOOL)animated;
+
 - (void)loadNextPage;
+- (void)loadNextPage:(BOOL)animated;
 - (void)loadPreviousPage;
+- (void)loadPreviousPage:(BOOL)animated;
 
 - (FTWebPageView *)previousPageView;
 - (FTWebPageView *)currentPageView;

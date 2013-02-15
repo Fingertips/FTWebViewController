@@ -10,6 +10,7 @@
 @property (strong, nonatomic) UISegmentedControl *navigationButtons;
 @property (assign, nonatomic) NSInteger currentPageIndex;
 @property (assign, nonatomic, getter=isRotating) BOOL rotating;
+@property (assign, nonatomic, getter=isProgramaticallyScrolling) BOOL programaticallyScrolling;
 @property (assign, nonatomic, getter=didNotifyDelegateThatFirstPageIsLoaded) BOOL notifiedDelegateThatFirstPageIsLoaded;
 @end
 
@@ -88,25 +89,44 @@
 
 - (void)loadPageAtIndex:(NSInteger)index;
 {
+  [self loadPageAtIndex:index animated:NO];
+}
+
+- (void)loadPageAtIndex:(NSInteger)index animated:(BOOL)animated;
+{
+  self.programaticallyScrolling = animated;
   [self _loadPageAtIndex:index];
+  CGPoint offset;
   if (self.horizontalLayout) {
-    CGFloat offset = self.currentPageView.frame.origin.x - (self.pageMargin / 2);
-    self.pagingScrollView.contentOffset = CGPointMake(offset, 0);
+    offset = CGPointMake(self.currentPageView.frame.origin.x - (self.pageMargin / 2), 0);
   } else {
-    CGFloat offset = self.currentPageView.frame.origin.y - (self.pageMargin / 2);
-    self.pagingScrollView.contentOffset = CGPointMake(0, offset);
+    offset = CGPointMake(0, self.currentPageView.frame.origin.y - (self.pageMargin / 2));
   }
-  [self scrollViewDidEndDecelerating:nil]; // TODO HACK
+  [self.pagingScrollView setContentOffset:offset animated:animated];
+  if (!animated) {
+    // This will be called automatically after an animated change.
+    [self scrollViewDidEndDecelerating:nil]; // TODO HACK
+  }
 }
 
 - (void)loadNextPage;
 {
-  [self loadPageAtIndex:self.currentPageIndex + 1];
+  [self loadNextPage:NO];
+}
+
+- (void)loadNextPage:(BOOL)animated;
+{
+  [self loadPageAtIndex:self.currentPageIndex+1 animated:animated];
 }
 
 - (void)loadPreviousPage;
 {
-  [self loadPageAtIndex:self.currentPageIndex - 1];
+  [self loadPreviousPage:NO];
+}
+
+- (void)loadPreviousPage:(BOOL)animated;
+{
+  [self loadPageAtIndex:self.currentPageIndex-1 animated:animated];
 }
 
 - (BOOL)isAtFirstPage;
@@ -114,7 +134,7 @@
   return self.currentPageIndex == 0;
 }
 
-- (BOOL)isAtLastPage;
+- (BOOL)sAtLastPage;
 {
   return self.currentPageIndex == self.URLs.count-1;
 }
@@ -340,6 +360,7 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
 {
+  self.programaticallyScrolling = NO;
   [self assignHTMLElementClass:@"swiping" toPageView:self.previousPageView];
   [self assignHTMLElementClass:@"swiping visible" toPageView:self.currentPageView];
   [self assignHTMLElementClass:@"swiping" toPageView:self.nextPageView];
@@ -347,7 +368,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 {
-  if (self.isRotating) return;
+  if (self.isRotating || self.isProgramaticallyScrolling) return;
 
   CGPoint contentOffset = self.pagingScrollView.contentOffset;
   BOOL movedToNextPage = NO;

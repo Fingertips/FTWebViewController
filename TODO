@@ -4,3 +4,4 @@
 * Simply use UIPageControl?
 * Automatically disable shadow if pageMargin is 0.
 * Make applicationScheme globally configurable.
+* There is a bug with -[FTWebViewController isAtLastPage] where it returns NO when it actually is at the last page. (See report app.)

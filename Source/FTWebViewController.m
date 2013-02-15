@@ -294,6 +294,10 @@
     [self.navigationButtons setEnabled:!self.isAtFirstPage forSegmentAtIndex:0];
     [self.navigationButtons setEnabled:!self.isAtLastPage  forSegmentAtIndex:1];
   }
+
+  if (self.delegate && [self.delegate respondsToSelector:@selector(webViewController:didShowPageView:)]) {
+    [self.delegate webViewController:self didShowPageView:self.currentPageView];
+  }
 }
 
 - (void)loadPageAtIndex:(NSInteger)index inPageView:(FTWebPageView *)pageView;
@@ -341,19 +345,33 @@
   [self assignHTMLElementClass:@"swiping" toPageView:self.nextPageView];
 }
 
-// TODO update for horizontalLayout=NO
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 {
   if (self.isRotating) return;
 
-  CGFloat pageWidth = self.pagingScrollView.frame.size.width;
-  CGFloat pageX = pageWidth * self.currentPageIndex;
-  CGFloat nextPageThreshold = pageX + (pageWidth / 2);
-  CGFloat previousPageThreshold = pageX - (pageWidth / 2);
+  CGPoint contentOffset = self.pagingScrollView.contentOffset;
+  BOOL movedToNextPage = NO;
+  BOOL movedToPreviousPage = NO;
 
-  if (self.pagingScrollView.contentOffset.x > nextPageThreshold) {
+  if (self.horizontalLayout) {
+    CGFloat pageWidth = self.pagingScrollView.frame.size.width;
+    CGFloat pageX = pageWidth * self.currentPageIndex;
+    CGFloat nextPageThreshold = pageX + (pageWidth / 2);
+    CGFloat previousPageThreshold = pageX - (pageWidth / 2);
+    movedToNextPage = contentOffset.x > nextPageThreshold;
+    movedToPreviousPage = contentOffset.x < previousPageThreshold;
+  } else {
+    CGFloat pageHeight = self.pagingScrollView.frame.size.height;
+    CGFloat pageY = pageHeight * self.currentPageIndex;
+    CGFloat nextPageThreshold = pageY + (pageHeight / 2);
+    CGFloat previousPageThreshold = pageY - (pageHeight / 2);
+    movedToNextPage = contentOffset.y > nextPageThreshold;
+    movedToPreviousPage = contentOffset.y < previousPageThreshold;
+  }
+
+  if (movedToNextPage) {
     [self _loadPageAtIndex:self.currentPageIndex+1];
-  } else if (self.pagingScrollView.contentOffset.x < previousPageThreshold) {
+  } else if (movedToPreviousPage) {
     [self _loadPageAtIndex:self.currentPageIndex-1];
   }
 }
@@ -361,16 +379,16 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate;
 {
   if (!willDecelerate) {
-    [self scrollingHorizontallyDidEnd];
+    [self pagingDidEnd];
   }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 {
-  [self scrollingHorizontallyDidEnd];
+  [self pagingDidEnd];
 }
 
-- (void)scrollingHorizontallyDidEnd;
+- (void)pagingDidEnd;
 {
   [self.previousPageView scrollToTop];
   [self.nextPageView scrollToTop];
@@ -398,13 +416,16 @@
 }
 
 // Update the layout as it should be at the end of the rotation animation.
-// TODO update for horizontalLayout=NO
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                                          duration:(NSTimeInterval)duration;
 {
   [self layoutScrollViewAndPages];
   CGPoint offset = self.pagingScrollView.contentOffset;
-  offset.x = self.pagingScrollView.frame.size.width * self.currentPageIndex;
+  if (self.horizontalLayout) {
+    offset.x = self.pagingScrollView.frame.size.width * self.currentPageIndex;
+  } else {
+    offset.y = self.pagingScrollView.frame.size.height * self.currentPageIndex;
+  }
   self.pagingScrollView.contentOffset = offset;
 }
 

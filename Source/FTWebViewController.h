@@ -8,6 +8,9 @@
 
 - (void)webViewControllerDidLoadFirstPage:(FTWebViewController *)webViewController;
 
+- (void)webViewController:(FTWebViewController *)webViewController
+          didShowPageView:(FTWebPageView *)pageView;
+
 - (NSString *)webViewController:(FTWebViewController *)webViewController
       willChangeClassOfPageView:(FTWebPageView *)pageView
                         toClass:(NSString *)className;

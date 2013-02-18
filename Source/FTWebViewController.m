@@ -1,7 +1,6 @@
 #import "FTWebViewController.h"
 #import "FTWebView.h"
 
-#import "StyledPageControl.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface FTWebViewController ()
@@ -183,12 +182,13 @@
 
   if (self.hasPageControl) {
     CGRect pageControlFrame = CGRectMake(0, 0, viewFrame.size.width, 22);
-    self.pageControl = [[StyledPageControl alloc] initWithFrame:pageControlFrame];
+    self.pageControl = [[UIPageControl alloc] initWithFrame:pageControlFrame];
     self.pageControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
-    self.pageControl.pageControlStyle = PageControlStyleDefault;
-    self.pageControl.diameter = 9;
-    self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
-    self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
+    // TODO this is not supported by UIPageControl.
+    //self.pageControl.pageControlStyle = PageControlStyleDefault;
+    //self.pageControl.diameter = 9;
+    //self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+    //self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
     self.pageControl.userInteractionEnabled = NO;
     self.pageControl.numberOfPages = self.numberOfPages;
     [self.view addSubview:self.pageControl];

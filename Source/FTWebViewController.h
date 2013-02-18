@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import "FTWebPageView.h"
 
-@class FTWebViewController, StyledPageControl;
+@class FTWebViewController;
 
 @protocol FTWebViewControllerDelegate <NSObject>
 @optional
@@ -26,7 +26,7 @@
 @property (readonly, nonatomic) NSArray *URLs;
 @property (readonly, nonatomic) NSString *applicationScheme;
 @property (readonly, nonatomic) UIScrollView *pagingScrollView;
-@property (strong,   nonatomic) StyledPageControl *pageControl;
+@property (strong,   nonatomic) UIPageControl *pageControl;
 @property (readonly, nonatomic) NSInteger currentPageIndex;
 @property (readonly, nonatomic) NSUInteger numberOfPages;
 @property (readonly, nonatomic) BOOL isAtFirstPage;

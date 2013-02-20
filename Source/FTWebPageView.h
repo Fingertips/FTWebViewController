@@ -32,6 +32,8 @@ typedef NS_ENUM(int, FTWebPageViewConditionalScrolling) {
 + (NSString *)defaultApplicationScheme;
 + (void)setDefaultApplicationScheme:(NSString *)applicationScheme;
 
++ (void)extractAction:(NSString **)action arguments:(NSDictionary **)arguments fromURL:(NSURL *)URL;
+
 - (void)scrollToTop;
 - (void)setHTMLElementClass:(NSString *)className;
 

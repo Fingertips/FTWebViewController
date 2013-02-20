@@ -147,6 +147,23 @@ static NSString *_defaultApplicationScheme = nil;
   }
 }
 
++ (void)extractAction:(NSString **)action arguments:(NSDictionary **)arguments fromURL:(NSURL *)URL;
+{
+  NSString *actionName = URL.host;
+  NSArray *pairs = [URL.query componentsSeparatedByString:@"&"];
+  NSMutableDictionary *args = [NSMutableDictionary new];
+  if ([URL.query length] > 0) {
+    for (NSString *pair in pairs) {
+      NSArray *nameAndValue = [pair componentsSeparatedByString:@"="];
+      NSString *value = nameAndValue[1];
+      value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+      args[nameAndValue[0]] = value;
+    }
+  }
+  *action = actionName;
+  *arguments = [args copy];
+}
+
 - (BOOL)webView:(UIWebView *)_ shouldStartLoadWithRequest:(NSURLRequest *)request
                                            navigationType:(UIWebViewNavigationType)navigationType;
 {
@@ -154,18 +171,10 @@ static NSString *_defaultApplicationScheme = nil;
   id<FTWebPageViewDelegate> delegate = self.delegate;
   if (delegate && [self.applicationScheme isEqualToString:URL.scheme] &&
       [delegate respondsToSelector:@selector(webPageView:didReceiveAction:withArguments:)]) {
-    NSString *actionName = URL.host;
-    NSArray *pairs = [URL.query componentsSeparatedByString:@"&"];
-    NSMutableDictionary *arguments = [NSMutableDictionary new];
-    if ([URL.query length] > 0) {
-      for (NSString *pair in pairs) {
-        NSArray *nameAndValue = [pair componentsSeparatedByString:@"="];
-        NSString *value = nameAndValue[1];
-        value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        arguments[nameAndValue[0]] = value;
-      }
-    }
-    [self.delegate webPageView:self didReceiveAction:actionName withArguments:[arguments copy]];
+    NSString *action = nil;
+    NSDictionary *arguments = nil;
+    [[self class] extractAction:&action arguments:&arguments fromURL:URL];
+    [self.delegate webPageView:self didReceiveAction:action withArguments:arguments];
     return NO;
   }
 

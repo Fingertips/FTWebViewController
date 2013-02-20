@@ -29,6 +29,9 @@ typedef NS_ENUM(int, FTWebPageViewConditionalScrolling) {
 @property (assign,   nonatomic) FTWebPageViewConditionalScrolling conditionalScrolling;
 @property (assign,   nonatomic) BOOL scrollEnabled;
 
++ (NSString *)defaultApplicationScheme;
++ (void)setDefaultApplicationScheme:(NSString *)applicationScheme;
+
 - (void)scrollToTop;
 - (void)setHTMLElementClass:(NSString *)className;
 

@@ -10,6 +10,20 @@
 
 @implementation FTWebPageView
 
+@synthesize applicationScheme = _applicationScheme;
+
+static NSString *_defaultApplicationScheme = nil;
+
++ (NSString *)defaultApplicationScheme;
+{
+  return _defaultApplicationScheme;
+}
+
++ (void)setDefaultApplicationScheme:(NSString *)applicationScheme;
+{
+  _defaultApplicationScheme = [applicationScheme lowercaseString];
+}
+
 - (id)initWithFrame:(CGRect)frame;
 {
   if ((self = [super initWithFrame:frame])) {
@@ -65,6 +79,11 @@
   if (![_applicationScheme isEqualToString:scheme]) {
     _applicationScheme = [scheme lowercaseString];
   }
+}
+
+- (NSString *)applicationScheme;
+{
+  return _applicationScheme ?: [[self class] defaultApplicationScheme];
 }
 
 - (void)updateConditionalScrolling;

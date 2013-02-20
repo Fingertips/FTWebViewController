@@ -34,6 +34,7 @@
     _horizontalLayout = YES;
     _openExternalLinksOutsideApp = YES;
     _hasPageNavigationButtons = YES;
+    _webPageViewClass = [FTWebPageView class];
     _pageViews = [NSMutableArray new];
   }
   return self;
@@ -168,7 +169,7 @@
 
   self.pageViews = [NSMutableArray array];
   for (int i = 0; i < 3; i++) {
-    FTWebPageView *pageView = [[FTWebPageView alloc] initWithFrame:viewFrame];
+    FTWebPageView *pageView = [[self.webPageViewClass alloc] initWithFrame:viewFrame];
     pageView.delegate = self;
     pageView.applicationScheme = self.applicationScheme;
     pageView.hasShadow = self.hasPageMarginShadow;

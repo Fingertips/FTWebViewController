@@ -28,6 +28,7 @@ typedef NS_ENUM(int, FTWebPageViewConditionalScrolling) {
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
 @property (assign,   nonatomic) FTWebPageViewConditionalScrolling conditionalScrolling;
 @property (assign,   nonatomic) BOOL scrollEnabled;
+@property (assign,   nonatomic) Class webViewClass;
 
 + (NSString *)defaultApplicationScheme;
 + (void)setDefaultApplicationScheme:(NSString *)applicationScheme;

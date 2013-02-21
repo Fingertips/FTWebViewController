@@ -39,7 +39,9 @@
 @property (assign,   nonatomic) BOOL hasPageNavigationButtons;
 @property (assign,   nonatomic) BOOL hasPageControl;
 @property (weak,     nonatomic) id<FTWebViewControllerDelegate> delegate;
+
 @property (assign,   nonatomic) Class webPageViewClass;
+@property (assign,   nonatomic) Class webViewClass;
 
 - (id)initWithPageURLs:(NSArray *)URLs;
 - (id)initWithPageURLs:(NSArray *)URLs applicationScheme:(NSString *)applicationScheme;

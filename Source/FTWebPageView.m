@@ -38,7 +38,15 @@ static NSString *_defaultApplicationScheme = nil;
     _activityIndicator.hidesWhenStopped = YES;
     [self addSubview:_activityIndicator];
 
-    _webView = [[FTWebView alloc] initWithFrame:self.bounds];
+    _webViewClass = [FTWebView class];
+  }
+  return self;
+}
+
+- (FTWebView *)webView;
+{
+  if (_webView == nil) {
+    _webView = [[self.webViewClass alloc] initWithFrame:self.bounds];
     _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _webView.delegate = self;
     // This has to be enabled so that the webview automatically resizes the
@@ -46,7 +54,7 @@ static NSString *_defaultApplicationScheme = nil;
     _webView.scalesPageToFit = YES;
     [self addSubview:_webView];
   }
-  return self;
+  return _webView;
 }
 
 - (void)setHasShadow:(BOOL)flag;

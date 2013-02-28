@@ -31,6 +31,7 @@ static NSString *_defaultApplicationScheme = nil;
 
     _hasShadow = NO;
     _scrollEnabled = YES;
+    _showLoadingIndicator = YES;
     _conditionalScrolling = FTWebPageViewConditionalScrollingByHeight;
     _openExternalLinksOutsideApp = YES;
 
@@ -138,7 +139,7 @@ static NSString *_defaultApplicationScheme = nil;
 - (void)setURL:(NSURL *)URL {
   if (![URL isEqual:_URL]) {
     _URL = URL;
-    [self.activityIndicator startAnimating];
+    if (self.showLoadingIndicator) [self.activityIndicator startAnimating];
     [self.webView removeFromSuperview];
     [self.webView loadRequest:[NSURLRequest requestWithURL:_URL]];
   }

@@ -5,7 +5,7 @@
 
 @interface FTWebViewController ()
 @property (strong, nonatomic) UIScrollView *pagingScrollView;
-@property (strong, nonatomic) NSMutableArray *pageViews;
+@property (strong, nonatomic) NSMutableArray *mutablePageViews;
 @property (strong, nonatomic) UISegmentedControl *navigationButtons;
 @property (assign, nonatomic) NSInteger currentPageIndex;
 @property (assign, nonatomic, getter=isRotating) BOOL rotating;
@@ -34,7 +34,7 @@
     _horizontalLayout = YES;
     _openExternalLinksOutsideApp = YES;
     _hasPageNavigationButtons = YES;
-    _pageViews = [NSMutableArray new];
+    _mutablePageViews = [NSMutableArray new];
 
     _webPageViewClass = [FTWebPageView class];
   }
@@ -47,7 +47,7 @@
     _horizontalLayout = flag;
     FTWebPageViewConditionalScrolling type;
     type = flag ? FTWebPageViewConditionalScrollingByHeight : FTWebPageViewConditionalScrollingByWidth;
-    for (FTWebPageView *pageView in self.pageViews) {
+    for (FTWebPageView *pageView in self.mutablePageViews) {
       pageView.conditionalScrolling = type;
     }
   }
@@ -57,7 +57,7 @@
 {
   if (_hasPageMarginShadow != flag) {
     _hasPageMarginShadow = flag;
-    for (FTWebPageView *pageView in self.pageViews) {
+    for (FTWebPageView *pageView in self.mutablePageViews) {
       pageView.hasShadow = flag;
     }
   }
@@ -67,7 +67,7 @@
 {
   if (_openExternalLinksOutsideApp != flag) {
     _openExternalLinksOutsideApp = flag;
-    for (FTWebPageView *pageView in self.pageViews) {
+    for (FTWebPageView *pageView in self.mutablePageViews) {
       pageView.openExternalLinksOutsideApp = flag;
     }
   }
@@ -77,7 +77,7 @@
 {
   if (![_applicationScheme isEqualToString:scheme]) {
     _applicationScheme = scheme;
-    for (FTWebPageView *pageView in self.pageViews) {
+    for (FTWebPageView *pageView in self.mutablePageViews) {
       pageView.applicationScheme = scheme;
     }
   }
@@ -168,7 +168,7 @@
   self.pagingScrollView = scrollView;
   [self.view addSubview:scrollView];
 
-  self.pageViews = [NSMutableArray array];
+  self.mutablePageViews = [NSMutableArray array];
   for (int i = 0; i < 3; i++) {
     FTWebPageView *pageView = [[self.webPageViewClass alloc] initWithFrame:viewFrame];
     if (self.webViewClass) {
@@ -179,7 +179,7 @@
     pageView.hasShadow = self.hasPageMarginShadow;
     pageView.openExternalLinksOutsideApp = self.openExternalLinksOutsideApp;
     pageView.conditionalScrolling = self.horizontalLayout ? FTWebPageViewConditionalScrollingByHeight : FTWebPageViewConditionalScrollingByWidth;
-    [self.pageViews addObject:pageView];
+    [self.mutablePageViews addObject:pageView];
   }
   // Scrolling to left/right on the first/last pages should show the same
   // background color as the webviews on the top/bottom.
@@ -230,19 +230,24 @@
 
 #pragma mark - Page loading related methods
 
+- (NSArray *)pageViews;
+{
+  return [self.mutablePageViews copy];
+}
+
 - (FTWebPageView *)previousPageView;
 {
-  return self.pageViews[0];
+  return self.mutablePageViews[0];
 }
 
 - (FTWebPageView *)currentPageView;
 {
-  return self.pageViews[1];
+  return self.mutablePageViews[1];
 }
 
 - (FTWebPageView *)nextPageView;
 {
-  return self.pageViews[2];
+  return self.mutablePageViews[2];
 }
 
 - (void)layoutScrollViewAndPages;
@@ -292,16 +297,16 @@
 
   if (self.currentPageIndex == before + 1) {
     // advance one page, so move old `previous' webview to the back to be the new `next' webview
-    FTWebPageView *pageView = self.pageViews[0];
-    [self.pageViews addObject:pageView];
-    [self.pageViews removeObjectAtIndex:0];
+    FTWebPageView *pageView = self.mutablePageViews[0];
+    [self.mutablePageViews addObject:pageView];
+    [self.mutablePageViews removeObjectAtIndex:0];
     [self loadPageAtIndex:self.currentPageIndex+1 inPageView:self.nextPageView];
 
   } else if (self.currentPageIndex == before - 1) {
     // go back one page, so move old `next' webview to the front to be the new `previous' webview
-    FTWebPageView *pageView = self.pageViews[2];
-    [self.pageViews insertObject:pageView atIndex:0];
-    [self.pageViews removeObjectAtIndex:3];
+    FTWebPageView *pageView = self.mutablePageViews[2];
+    [self.mutablePageViews insertObject:pageView atIndex:0];
+    [self.mutablePageViews removeObjectAtIndex:3];
     [self loadPageAtIndex:self.currentPageIndex-1 inPageView:self.previousPageView];
 
   } else {

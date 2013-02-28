@@ -26,6 +26,7 @@
 @property (readonly, nonatomic) NSArray *URLs;
 @property (readonly, nonatomic) NSString *applicationScheme;
 @property (readonly, nonatomic) UIScrollView *pagingScrollView;
+@property (readonly, nonatomic) NSArray *pageViews;
 @property (strong,   nonatomic) UIPageControl *pageControl;
 @property (readonly, nonatomic) NSInteger currentPageIndex;
 @property (readonly, nonatomic) NSUInteger numberOfPages;

@@ -39,4 +39,6 @@ typedef NS_ENUM(int, FTWebPageViewConditionalScrolling) {
 - (void)scrollToTop;
 - (void)setHTMLElementClass:(NSString *)className;
 
+- (void)setWebViewContentInsets:(UIEdgeInsets)insets;
+
 @end

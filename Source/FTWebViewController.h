@@ -39,6 +39,7 @@
 @property (assign,   nonatomic) BOOL openExternalLinksOutsideApp;
 @property (assign,   nonatomic) BOOL hasPageNavigationButtons;
 @property (assign,   nonatomic) BOOL hasPageControl;
+@property (assign,   nonatomic) UIEdgeInsets webViewContentInsets;
 @property (weak,     nonatomic) id<FTWebViewControllerDelegate> delegate;
 
 @property (assign,   nonatomic) Class webPageViewClass;

@@ -36,7 +36,13 @@
     _hasPageNavigationButtons = YES;
     _mutablePageViews = [NSMutableArray new];
 
+    _webViewContentInsets = UIEdgeInsetsZero;
     _webPageViewClass = [FTWebPageView class];
+
+    // Don’t let iOS 7 take control of our nested scrollviews.
+    if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
+      self.automaticallyAdjustsScrollViewInsets = NO;
+    }
   }
   return self;
 }
@@ -142,6 +148,22 @@
 
 #pragma mark - Private from here on
 
+// TODO add (extra) inset when in a UITabBarController.
+- (void)willMoveToParentViewController:(UIViewController *)parent;
+{
+  [super willMoveToParentViewController:parent];
+  CGFloat topInset = 0;
+  UIApplication *app = [UIApplication sharedApplication];
+  if (!app.statusBarHidden) {
+    topInset += CGRectGetHeight(app.statusBarFrame);
+  }
+  if ([parent isKindOfClass:[UINavigationController class]]) {
+    UINavigationBar *navBar = [(UINavigationController *)parent navigationBar];
+    topInset += CGRectGetHeight(navBar.frame);
+  }
+  self.webViewContentInsets = UIEdgeInsetsMake(topInset, 0, 0, 0);
+}
+
 - (void)loadView;
 {
   CGRect viewFrame = [[UIScreen mainScreen] applicationFrame];
@@ -179,6 +201,7 @@
     pageView.hasShadow = self.hasPageMarginShadow;
     pageView.openExternalLinksOutsideApp = self.openExternalLinksOutsideApp;
     pageView.conditionalScrolling = self.horizontalLayout ? FTWebPageViewConditionalScrollingByHeight : FTWebPageViewConditionalScrollingByWidth;
+    pageView.webViewContentInsets = self.webViewContentInsets;
     [self.mutablePageViews addObject:pageView];
   }
   // Scrolling to left/right on the first/last pages should show the same

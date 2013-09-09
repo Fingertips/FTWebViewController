@@ -95,6 +95,14 @@ static NSString *_defaultApplicationScheme = nil;
   return _applicationScheme ?: [[self class] defaultApplicationScheme];
 }
 
+- (void)setWebViewContentInsets:(UIEdgeInsets)insets;
+{
+  NSAssert(insets.left == 0 && insets.right == 0, @"This shortcut only supports top and bottom insets.");
+  UIScrollView *scrollView = self.webView.scrollView;
+  scrollView.contentInset = insets;
+  scrollView.scrollIndicatorInsets = insets;
+}
+
 - (void)updateConditionalScrolling;
 {
   if (self.scrollEnabled && self.conditionalScrolling != FTWebPageViewConditionalScrollingNever) {
@@ -128,7 +136,9 @@ static NSString *_defaultApplicationScheme = nil;
 
 - (void)scrollToTop;
 {
-  self.webView.scrollView.contentOffset = CGPointZero;
+  UIEdgeInsets insets = self.webView.scrollView.contentInset;
+  CGPoint point = CGPointMake(-insets.left, -insets.top);
+  self.webView.scrollView.contentOffset = point;
 }
 
 // When a page is loaded, the webview is removed from the view and is only

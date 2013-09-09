@@ -209,14 +209,11 @@
   scrollView.backgroundColor = self.currentPageView.webView.backgroundColor;
 
   if (self.hasPageControl) {
-    CGRect pageControlFrame = CGRectMake(0, 0, viewFrame.size.width, 22);
+    CGRect pageControlFrame = CGRectMake(0, self.webViewContentInsets.top, viewFrame.size.width, 22);
     self.pageControl = [[UIPageControl alloc] initWithFrame:pageControlFrame];
     self.pageControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
-    // TODO this is not supported by UIPageControl.
-    //self.pageControl.pageControlStyle = PageControlStyleDefault;
-    //self.pageControl.diameter = 9;
-    //self.pageControl.coreNormalColor = [UIColor colorWithWhite:0.5 alpha:0.3];
-    //self.pageControl.coreSelectedColor = [UIColor colorWithWhite:0.5 alpha:1];
+    self.pageControl.pageIndicatorTintColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+    self.pageControl.currentPageIndicatorTintColor = [UIColor colorWithWhite:0.5 alpha:1];
     self.pageControl.userInteractionEnabled = NO;
     self.pageControl.numberOfPages = self.numberOfPages;
     [self.view addSubview:self.pageControl];

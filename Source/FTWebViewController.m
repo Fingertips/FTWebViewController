@@ -223,7 +223,15 @@
     NSArray *images = @[[UIImage imageNamed:@"button-left"], [UIImage imageNamed:@"button-right"]];
     self.navigationButtons = [[UISegmentedControl alloc] initWithItems:images];
     self.navigationButtons.momentary = YES;
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // While this property is deprecated on iOS 7, there is no replacement
+    // and assigning the value is simply ignored. So leave this in for iOS 6
+    // for now.
     self.navigationButtons.segmentedControlStyle = UISegmentedControlStyleBar;
+#pragma clang diagnostic pop
+
     [self.navigationButtons addTarget:self
                               action:@selector(changePage:)
                     forControlEvents:UIControlEventValueChanged];

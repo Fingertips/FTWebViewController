@@ -148,22 +148,6 @@
 
 #pragma mark - Private from here on
 
-// TODO add (extra) inset when in a UITabBarController.
-- (void)willMoveToParentViewController:(UIViewController *)parent;
-{
-  [super willMoveToParentViewController:parent];
-  CGFloat topInset = 0;
-  UIApplication *app = [UIApplication sharedApplication];
-  if (!app.statusBarHidden) {
-    topInset += CGRectGetHeight(app.statusBarFrame);
-  }
-  if ([parent isKindOfClass:[UINavigationController class]]) {
-    UINavigationBar *navBar = [(UINavigationController *)parent navigationBar];
-    topInset += CGRectGetHeight(navBar.frame);
-  }
-  self.webViewContentInsets = UIEdgeInsetsMake(topInset, 0, 0, 0);
-}
-
 - (void)loadView;
 {
   CGRect viewFrame = [[UIScreen mainScreen] applicationFrame];
@@ -242,18 +226,43 @@
   [self loadPageAtIndex:0];
 }
 
+// TODO add (extra) inset when in a UITabBarController.
+- (void)willMoveToParentViewController:(UIViewController *)parent;
+{
+  [super willMoveToParentViewController:parent];
+  // On iOS 7 set the correct scrollview insets.
+  if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
+    CGFloat topInset = 0;
+    UIApplication *app = [UIApplication sharedApplication];
+    if (!app.statusBarHidden) {
+      topInset += CGRectGetHeight(app.statusBarFrame);
+    }
+    if ([parent isKindOfClass:[UINavigationController class]]) {
+      UINavigationBar *navBar = [(UINavigationController *)parent navigationBar];
+      topInset += CGRectGetHeight(navBar.frame);
+    }
+    self.webViewContentInsets = UIEdgeInsetsMake(topInset, 0, 0, 0);
+  }
+}
+
+// If these webviews were not to be hidden, they would force themselves to be drawn while pushing
+// and popping on the navigation stack.
+- (void)viewDidAppear:(BOOL)animated;
+{
+  [super viewDidAppear:animated];
+  self.previousPageView.hidden = NO;
+  self.nextPageView.hidden = NO;
+}
+- (void)viewWillDisappear:(BOOL)animated;
+{
+  [super viewWillDisappear:animated];
+  self.previousPageView.hidden = YES;
+  self.nextPageView.hidden = YES;
+}
+
 - (void)viewDidLayoutSubviews;
 {
   [self layoutScrollViewAndPages];
-}
-
-- (void)changePage:(UISegmentedControl *)buttons;
-{
-  if (buttons.selectedSegmentIndex == 0) {
-    [self loadPreviousPage];
-  } else {
-    [self loadNextPage];
-  }
 }
 
 #pragma mark - Page loading related methods
@@ -276,6 +285,15 @@
 - (FTWebPageView *)nextPageView;
 {
   return self.mutablePageViews[2];
+}
+
+- (void)changePage:(UISegmentedControl *)buttons;
+{
+  if (buttons.selectedSegmentIndex == 0) {
+    [self loadPreviousPage];
+  } else {
+    [self loadNextPage];
+  }
 }
 
 - (void)layoutScrollViewAndPages;
@@ -494,3 +512,4 @@
 }
 
 @end
+

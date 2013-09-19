@@ -231,15 +231,11 @@
 {
   [super willMoveToParentViewController:parent];
   // On iOS 7 set the correct scrollview insets.
-  if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
+  if (UIEdgeInsetsEqualToEdgeInsets(self.webViewContentInsets, UIEdgeInsetsZero) && [self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
     CGFloat topInset = 0;
-    UIApplication *app = [UIApplication sharedApplication];
-    if (!app.statusBarHidden) {
-      topInset += CGRectGetHeight(app.statusBarFrame);
-    }
-    if ([parent isKindOfClass:[UINavigationController class]]) {
-      UINavigationBar *navBar = [(UINavigationController *)parent navigationBar];
-      topInset += CGRectGetHeight(navBar.frame);
+    UINavigationController *navController = [parent isKindOfClass:[UINavigationController class]] ? parent : parent.navigationController;
+    if (navController) {
+      topInset += CGRectGetMaxY(navController.navigationBar.frame);
     }
     self.webViewContentInsets = UIEdgeInsetsMake(topInset, 0, 0, 0);
   }

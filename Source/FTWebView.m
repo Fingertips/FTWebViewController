@@ -6,7 +6,7 @@
 
 - (void)enableScrollingIfDocumentIsLargerThanViewport:(BOOL)byHeight;
 {
-  NSString *dimension = byHeight ? @"document.height" : @"document.width";
+  NSString *dimension = byHeight ? @"document.body.clientHeight" : @"document.body.clientWidth";
   int value = [[self stringByEvaluatingJavaScriptFromString:dimension] intValue];
   CGSize size = self.bounds.size;
   self.scrollView.scrollEnabled = value > floor(byHeight ? size.height : size.width);

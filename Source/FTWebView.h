@@ -9,6 +9,10 @@
 // This is used to ensure that documents that don’t need scrolling won’t bounce.
 - (void)enableScrollingIfDocumentIsLargerThanViewport:(BOOL)byHeight;
 
+// If the HTML <body> element has a noscroll class we disable scrolling in the
+// webview's scroll view.
+- (void)enableScrollingBasedOnDocumentBodyClass;
+
 - (void)setHTMLElementClass:(NSString *)className;
 - (NSString *)HTMLElementClass;
 

@@ -1,9 +1,10 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(int, FTWebPageViewConditionalScrolling) {
-  FTWebPageViewConditionalScrollingNever    = 0,
-  FTWebPageViewConditionalScrollingByHeight = 1,
-  FTWebPageViewConditionalScrollingByWidth  = 2
+  FTWebPageViewConditionalScrollingNever       = 0,
+  FTWebPageViewConditionalScrollingByHeight    = 1,
+  FTWebPageViewConditionalScrollingByWidth     = 2,
+  FTWebPageViewConditionalScrollingByBodyClass = 3
 };
 
 @class FTWebView, FTWebPageView;

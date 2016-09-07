@@ -28,7 +28,7 @@
   //  |        | <- usable view space for the webview
   //  |        |
   //  |________|
-  CGFloat maxWithoutScrolling = nil;
+  CGFloat maxWithoutScrolling = 0.0;
   if (byHeight) {
     maxWithoutScrolling = viewSize.height - (insets.top + insets.bottom);
   } else {
@@ -38,6 +38,12 @@
   // From HTML we get the size in whole points but on the iOS the size is
   // a float. Floor the float before comparison to make sure it fits.
   self.scrollView.scrollEnabled = clientSize > floor(maxWithoutScrolling);
+}
+
+- (void)enableScrollingBasedOnDocumentBodyClass;
+{
+  NSArray *classes = [[self HTMLElementClass] componentsSeparatedByString:@" "];
+  self.scrollView.scrollEnabled = [classes containsObject:@"noscroll"];
 }
 
 - (void)setHTMLElementClass:(NSString *)className;

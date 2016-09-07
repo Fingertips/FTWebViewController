@@ -117,9 +117,18 @@ static NSString *_defaultApplicationScheme = nil;
   center.x -= self.frame.origin.x;
   self.activityIndicator.center = center;
 
-  // Force the size of the webView, because it doesn't resize with the superview
-  // if it has been removed from the superview at the time the superview resizes.
-  self.webView.frame = self.bounds;
+  // The webview does not automatically resize together with the superview
+  // then it resizes so we need to force its size. This happens for example
+  // when the orientation of the app changes.
+  //
+  // Note that the view may become larger than its superview causing it to
+  // not swipe properly. That's why we floor the width and height.
+  self.webView.frame = CGRectMake(
+    self.bounds.origin.x,
+    self.bounds.origin.y,
+    floor(self.bounds.size.width),
+    floor(self.bounds.size.height)
+  );
 
   [self updateConditionalScrolling];
 }

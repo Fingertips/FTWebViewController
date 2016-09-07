@@ -32,7 +32,7 @@ static NSString *_defaultApplicationScheme = nil;
     _hasShadow = NO;
     _scrollEnabled = YES;
     _showLoadingIndicator = YES;
-    _conditionalScrolling = FTWebPageViewConditionalScrollingByHeight;
+    _conditionalScrolling = FTWebPageViewConditionalScrollingByBodyClass;
     _openExternalLinksOutsideApp = YES;
 
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -106,8 +106,12 @@ static NSString *_defaultApplicationScheme = nil;
 - (void)updateConditionalScrolling;
 {
   if (self.scrollEnabled && self.conditionalScrolling != FTWebPageViewConditionalScrollingNever) {
-    BOOL byHeight = self.conditionalScrolling == FTWebPageViewConditionalScrollingByHeight;
-    [self.webView enableScrollingIfDocumentIsLargerThanViewport:byHeight];
+    if (self.conditionalScrolling == FTWebPageViewConditionalScrollingByHeight)
+      [self.webView enableScrollingIfDocumentIsLargerThanViewport:true];
+    else if (self.conditionalScrolling == FTWebPageViewConditionalScrollingByWidth)
+      [self.webView enableScrollingIfDocumentIsLargerThanViewport:false];
+    else if (self.conditionalScrolling == FTWebPageViewConditionalScrollingByBodyClass)
+      [self.webView enableScrollingBasedOnDocumentBodyClass];
   }
 }
 

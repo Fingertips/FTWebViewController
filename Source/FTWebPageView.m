@@ -49,6 +49,7 @@ static NSString *_defaultApplicationScheme = nil;
   if (_webView == nil) {
     _webView = [[self.webViewClass alloc] initWithFrame:self.bounds];
     _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _webView.opaque = NO;
     _webView.delegate = self;
     // This has to be enabled so that the webview automatically resizes the
     // content after orientation changes.
